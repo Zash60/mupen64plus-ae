@@ -920,9 +920,6 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     }
 
     public void initChannels(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return;
-        }
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -1116,11 +1113,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
         }
 
         //Stop the service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            stopForeground(STOP_FOREGROUND_REMOVE);
-        } else {
-            stopForeground(true);
-        }
+        stopForeground(STOP_FOREGROUND_REMOVE);
         stopSelf();
     }
 

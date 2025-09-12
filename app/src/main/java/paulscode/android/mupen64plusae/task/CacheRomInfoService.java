@@ -222,12 +222,8 @@ public class CacheRomInfoService extends Service
                     cacheFile( file, database, config);
                 } else if (mSearchZips && !configHasZip(config, file)) {
                     if (header.isZip) {
-                        if (AppData.IS_NOUGAT) {
-                            cacheZipFast(database, file, config);
-                        } else {
-                            cacheZip(database, file, config);
-                        }
-                    } else if (header.is7Zip && AppData.IS_NOUGAT) {
+                        cacheZipFast(database, file, config);
+                    } else if (header.is7Zip) {
                         cache7Zip(database, file, config);
                     }
                 }
@@ -261,9 +257,6 @@ public class CacheRomInfoService extends Service
     }
 
     public void initChannels(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return;
-        }
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -379,7 +372,6 @@ public class CacheRomInfoService extends Service
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void cacheZipFast(RomDatabase database, Uri file, ConfigFile config)
     {
         Log.i( "CacheRomInfoService", "Found zip file " + file.toString() );
@@ -388,7 +380,9 @@ public class CacheRomInfoService extends Service
             if (parcelFileDescriptor != null) {
                 FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
 
-                ZipFile zipFile = new ZipFile(fileInputStream.getChannel());
+                ZipFile zipFile = ZipFile.builder()
+                        .setSeekableByteChannel(fileInputStream.getChannel())
+                        .get();
                 Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
 
                 // Limit how many times we will look for ROMs in a large zip file
@@ -423,7 +417,6 @@ public class CacheRomInfoService extends Service
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void cache7Zip(RomDatabase database, Uri file, ConfigFile config)
     {
         Log.i( "CacheRomInfoService", "Found 7zip file " + file.toString() );
@@ -431,8 +424,9 @@ public class CacheRomInfoService extends Service
         try (ParcelFileDescriptor parcelFileDescriptor = getApplicationContext().getContentResolver().openFileDescriptor(file, "r")) {
             if (parcelFileDescriptor != null) {
                 FileInputStream fileInputStream = new FileInputStream(parcelFileDescriptor.getFileDescriptor());
-
-                SevenZFile zipFile = new SevenZFile(fileInputStream.getChannel());
+                SevenZFile zipFile = SevenZFile.builder()
+                        .setSeekableByteChannel(fileInputStream.getChannel())
+                        .get();
                 SevenZArchiveEntry zipEntry;
 
                 // Limit how many times we will look for ROMs in a large zip file

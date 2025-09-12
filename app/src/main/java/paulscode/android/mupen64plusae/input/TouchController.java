@@ -368,12 +368,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                                 if( mVibrator != null )
                                 {
                                     mVibrator.cancel();
-
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        mVibrator.vibrate(VibrationEffect.createWaveform(AUTOHOLD_VIBRATE_PATTERN, -1));
-                                    } else {
-                                        mVibrator.vibrate(AUTOHOLD_VIBRATE_PATTERN, -1 );
-                                    }
+                                    mVibrator.vibrate(VibrationEffect.createWaveform(AUTOHOLD_VIBRATE_PATTERN, -1));
                                 }
                                 mListener.onAutoHold( true, prevIndex );
                                 setTouchState( prevIndex, true );
@@ -436,12 +431,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                 if( firstTouched )
                 {
                     mVibrator.cancel();
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
-                    } else {
-                        mVibrator.vibrate(FEEDBACK_VIBRATE_TIME);
-                    }
+                    mVibrator.vibrate(VibrationEffect.createOneShot(FEEDBACK_VIBRATE_TIME, 100));
                 }
             }
 
@@ -479,12 +469,7 @@ public class TouchController extends AbstractController implements OnTouchListen
                             if( mVibrator != null )
                             {
                                 mVibrator.cancel();
-
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    mVibrator.vibrate(VibrationEffect.createWaveform(AUTOHOLD_VIBRATE_PATTERN, -1));
-                                } else {
-                                    mVibrator.vibrate(AUTOHOLD_VIBRATE_PATTERN, -1 );
-                                }
+                                mVibrator.vibrate(VibrationEffect.createWaveform(AUTOHOLD_VIBRATE_PATTERN, -1));
                             }
                             mListener.onAutoHold( true, index );
                             setTouchState( index, true );
